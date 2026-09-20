@@ -22,7 +22,7 @@
     "demo:seed": "node --env-file=.env --experimental-strip-types scripts/seed.ts",
     "cli": "node --experimental-strip-types src/cli/main.ts",
     "contract:test": "cargo test --locked --manifest-path contracts/Cargo.toml",
-    "contract:build": "cargo build --locked --manifest-path contracts/Cargo.toml --target wasm32v1-none --release",
+    "contract:build": "node scripts/build-contract.mjs",
     "configure:agent": "node scripts/configure-agent.mjs"
   },
   "dependencies": {

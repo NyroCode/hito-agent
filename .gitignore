@@ -10,6 +10,7 @@ contracts/test_snapshots/
 contracts/**/test_snapshots/
 public/wallet.bundle.js
 reports/local-*/
+reports/browser-e2e/
 *.db
 *.db-shm
 *.db-wal

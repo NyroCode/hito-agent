@@ -49,6 +49,7 @@ reports/build/packaging-audit.json
 reports/build/summary.json
 reports/build/syntax.log
 scripts/bootstrap-speckit.sh
+scripts/build-contract.mjs
 scripts/build-wallet.mjs
 scripts/check-syntax.mjs
 scripts/configure-agent.mjs
