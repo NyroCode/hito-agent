@@ -1386,6 +1386,64 @@
           }
         }
       }
+    },
+    "/api/intents/{intentId}/recover": {
+      "post": {
+        "summary": "Conservatively recover a stale PREPARING lease or re-check an expired READY intent",
+        "operationId": "post__api_intents_intentId_recover",
+        "x-admin-only": true,
+        "responses": {
+          "200": {
+            "description": "Recovered only after proving the documented safe condition; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Human/admin route required"
+          },
+          "409": {
+            "description": "Lease active, legacy/ambiguous checkpoint, or UNKNOWN/NOT_FOUND cannot prove safety"
+          },
+          "503": {
+            "description": "Testnet unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "intentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

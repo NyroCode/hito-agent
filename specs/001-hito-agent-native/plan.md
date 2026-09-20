@@ -5,11 +5,11 @@ Construir una herramienta MCP sobre un servicio determinista local. El agente ex
 
 ## Technical Context
 
-Language: TypeScript ESM/Node 22 y Rust. Storage: SQLite/WAL local. Client: stdio MCP, CLI y UI sin framework. Chain: Soroban + token compatible SAC/SEP-41 en Stellar Testnet. External dependencies: SDK MCP v1, SDK Stellar, Freighter, Zod, esbuild; versiones candidatas fijadas y verificaciones pendientes en `docs/DEPENDENCIES.md`. No LLM API, Next.js, Redis ni proveedor de base remoto obligatorio.
+Language: TypeScript ESM/Node >=22.16 y Rust. Storage: SQLite/WAL local. Client: stdio MCP, CLI y UI sin framework. Chain: Soroban + token compatible SAC/SEP-41 en Stellar Testnet. External dependencies: SDK MCP v1, SDK Stellar, Freighter, Zod, esbuild; versiones resueltas y locks en `docs/DEPENDENCIES.md`. No LLM API, Next.js, Redis ni proveedor de base remoto obligatorio.
 
 ## Constitution Check
 
-Herramienta/no agente: PASS por diseño. Separación de firma: local tests PASS; SDK/wallet pendiente. Evidencia honesta: local PASS. Reproducibilidad: core PASS, dependencias externas bloqueadas. Stellar real: NOT_RUN. No declarar producto Converged hasta resolver todos los gates P0.
+Herramienta/no agente: PASS por diseño. Separación de firma: core/SDK/browser simulado PASS; extensión humana pendiente. Evidencia honesta: local PASS. Reproducibilidad local: npm/Cargo locks, types, MCP, Chromium y WASM PASS. Stellar Testnet real: NOT_RUN. No declarar producto Converged hasta resolver G2 host, G4 wallet real y G5/G6.
 
 ## Phase 0 — Investigación y decisiones
 

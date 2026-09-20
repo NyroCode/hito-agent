@@ -21,28 +21,28 @@ Convención: `[x]` implica trabajo fuente comprobado dentro del alcance señalad
 - [x] T018 CLI y setup sin seeds; verificación sintáctica y smoke local.
 
 ## Fase 3 — Dependencias y herramientas de agente
-- [ ] T020 [P] Revisar/resolver pins y generar `package-lock.json`; registrar `docs/DEPENDENCIES.md`.
-- [ ] T021 [P] `npm run check:types`; corregir tipos/API en `src/stellar`, `src/mcp`, `src/wallet` contra libs instaladas.
-- [ ] T022 [US1] Ejecutar `tests/adapters/mcp.test.ts`, ampliar save/delivery/idempotencia real del transporte.
+- [x] T020 [P] Revisar/resolver pins y generar `package-lock.json`; registrar `docs/DEPENDENCIES.md`.
+- [x] T021 [P] `npm run check:types`; corregir tipos/API en `src/stellar`, `src/mcp`, `src/wallet` contra libs instaladas.
+- [x] T022 [US1] Ejecutar `tests/adapters/mcp.test.ts`, ampliar save/delivery/idempotencia real del transporte.
 - [ ] T023 [US1] Configurar cliente mediante `scripts/configure-agent.mjs`, verificar siete herramientas y scope limitado.
 - [ ] T024 [US2] Probar skill explícita `.agents/skills/hito` sin nuevas reglas globales/autoloops.
 - [ ] T025 Converge de US1/US2 con transcript sanitizado, no mensaje sintético de agente.
 
 ## Fase 4 — Contrato y SDK
-- [ ] T030 [P] Instalar/verificar Rust/CLI, generar `contracts/Cargo.lock`.
-- [ ] T031 [US3] fmt/clippy/test/build de `contracts/hito-escrow` (fuente y 22 tests ya escritos, no ejecutados).
-- [ ] T032 [US3] Ampliar auth negativos mediante auth tree de rol exacto; no solo mocks globales.
-- [ ] T033 [US3] Probar dos works y balances/rollback, edge cases de cero/suma/fechas/dependencias.
+- [x] T030 [P] Instalar/verificar toolchain Rust aislada y generar `contracts/Cargo.lock`; Stellar CLI sigue pendiente para deploy.
+- [x] T031 [US3] fmt/clippy/test/build de `contracts/hito-escrow` (31 tests ejecutados).
+- [x] T032 [US3] Ampliar auth negativos mediante auth tree de rol exacto; no solo mocks globales.
+- [x] T033 [US3] Probar dos works y balances/rollback, edge cases de cero/suma/fechas/dependencias.
 - [ ] T034 [US4] Validar cancelación/expiry/protección de entregas, TTL y restauración.
-- [ ] T035 [US3] Ejecutar `tests/adapters/stellar-sdk.test.ts` y tests de sim/assemble/read reales con mocks de RPC tipados.
-- [ ] T036 [US3] Revisar conversión contractArguments/ABI y native ScVal con SDK instalado.
+- [x] T035 [US3] Ejecutar `tests/adapters/stellar-sdk.test.ts` y pruebas de firma/cuerpo/red con SDK real y RPC tipado simulado.
+- [x] T036 [US3] Revisar conversión contractArguments/ABI y native ScVal con SDK instalado.
 
 ## Fase 5 — Wallet y recuperación
-- [ ] T040 [P] Build de wallet y navegador real: `src/wallet/entry.ts`, `public/`.
-- [ ] T041 [US3] Denegación, wallet/red equivocada y firma/cuerpo alterado.
+- [x] T040 [P] Build de wallet y navegador Chromium real: `src/wallet/entry.ts`, `public/`.
+- [x] T041 [US3] Denegación, wallet/red equivocada y firma/cuerpo alterado (transporte wallet simulado + crypto SDK real; extensión pendiente).
 - [ ] T042 [US4] Implementar recuperación segura READY/PREPARING, timebounds y estados de crash; no borrar lock manualmente.
-- [ ] T043 [US4] Test carrera de reconcile/submit/rebuild y crash-before/after-broadcast.
-- [ ] T044 [US2] Browser E2E desktop/móvil, evidencia declarada visible y ausencia de XSS/token storage.
+- [x] T043 [US4] Test carrera de reconcile/submit/rebuild y crash-before/after-broadcast.
+- [x] T044 [US2] Browser E2E desktop/móvil, evidencia declarada visible y ausencia de XSS/token storage.
 
 ## Fase 6 — Testnet
 - [ ] T050 Verificar token/issuer/decimals, fondos Testnet y wallets por humano.
@@ -53,8 +53,8 @@ Convención: `[x]` implica trabajo fuente comprobado dentro del alcance señalad
 - [ ] T055 Guardar receipts, readback y logs en `reports/local-*`.
 
 ## Fase 7 — Empaque y concurso
-- [ ] T060 Original reglamento, elegibilidad, reutilización y fechas confirmados.
-- [ ] T061 Fresh install con locks, npm ci y cargo --locked; pipeline reproducible.
+- [x] T060 Reglamento primario, reutilización y fechas confirmados; elegibilidad/inscripción personal pendiente del usuario.
+- [x] T061 Fresh install con locks, npm ci y cargo --locked; pipeline local reproducible.
 - [ ] T062 Revisión externa/independiente de seguridad para dinero real (fuera de demo Testnet).
 - [ ] T063 Video del agente y transacción real; no simulaciones presentadas como reales.
 - [ ] T064 Actualizar README/estado y ZIP sin secretos/DB/node_modules/target.

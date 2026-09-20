@@ -86,4 +86,4 @@ Project, Work/Plan, Milestone, Criterion, Delivery, Progress, Intent, AuditEntry
 SC-03 y compatibilidad real MCP/wallet NO están satisfechos por esta entrega. No hay promesa cuantitativa de ahorro, adopción o premio.
 
 ## Assumptions y exclusiones
-Demo local de un operador con wallets separadas; no SaaS público. Un token/activo por despliegue. No fiat, FX, NFTs, passkeys, arbitraje, oráculo, x402, múltiples firmantes por wallet ni CI independiente todavía. No se confunden direcciones sintéticas con cuentas Testnet. Bases originales de concurso pendientes de cotejo.
+Demo local de un operador con wallets separadas; no SaaS público. Un token/activo por despliegue. No fiat, FX, NFTs, passkeys, arbitraje, oráculo, x402, múltiples firmantes por wallet ni CI independiente todavía. No se confunden direcciones sintéticas con cuentas Testnet. Las bases oficiales del concurso se cotejaron el 20-sep-2026; inscripción y elegibilidad del equipo son confirmaciones humanas.

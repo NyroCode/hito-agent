@@ -41,6 +41,6 @@ export class WorkService {
     });
   }
   intent(a:Actor,iid:string){const i=this.store.get<Intent>('intent',iid);check(i,'NOT_FOUND','Intent not found',404);this.work(a,i.workId);return i;}
-  publicIntent(i:Intent){const {signedXdr,unsignedXdr,...out}=i;return {...out,requiresWalletSignature:true};}
+  publicIntent(i:Intent){const {signedXdr,unsignedXdr,preparingAt,buildAttempt,...out}=i;return {...out,requiresWalletSignature:true};}
   intents(a:Actor,wid:string){const w=this.work(a,wid);return this.store.list<Intent>('intent',w.projectId).filter(i=>i.workId===wid).map(i=>this.publicIntent(i));}
 }

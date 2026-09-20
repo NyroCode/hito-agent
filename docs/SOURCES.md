@@ -2,10 +2,11 @@
 
 ## Cómo leer este registro
 
-Las URLs siguientes son fuentes primarias consultadas por web. «Diseño Hito» es una decisión nuestra, no algo que el fabricante garantice. No se descargaron dependencias ni el repositorio upstream al contenedor por fallo DNS. La consulta web sí estuvo disponible. No se inventa commit/tag estable de Spec Kit.
+Las URLs siguientes son fuentes primarias consultadas por web. «Diseño Hito» es una decisión nuestra, no algo que el fabricante garantice. La entrega original registró un fallo DNS; la integración posterior sí resolvió dependencias/locks y verificó un tag estable de Spec Kit. No se ejecutó `init --force`.
 
 | Fuente | Información utilizada / límite |
 |---|---|
+| https://github.com/github/spec-kit/releases/tag/v1.0.8 | Release revisado; tag `v1.0.8`, commit `0cc9a6a1159471a3108b9bad718ba17006dd6039`. |
 | https://github.com/github/spec-kit | Metodología actual: constitución, especificación, plan, tareas, implementación y convergencia. |
 | https://github.github.io/spec-kit/installation.html | CLI y fijación de versiones; no overwrite automático del proyecto. |
 | https://raw.githubusercontent.com/github/spec-kit/main/templates/spec-template.md | Organización de escenarios, requisitos y criterios de éxito. |
@@ -34,10 +35,12 @@ Las URLs siguientes son fuentes primarias consultadas por web. «Diseño Hito» 
 | https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/v1.x/package.json | Elección deliberada de SDK v1; rango compatible Zod. |
 | https://developers.openai.com/codex/mcp | Configuración MCP; confirmar con versión del cliente. |
 | https://agentskills.io/specification | Formato de skill; funciones específicas no universales. |
+| https://stellar.mintedinpe.com/odyssey | Página oficial de Stellar Odyssey Perú: tracks, Testnet, equipos y resumen de entregables. |
+| https://stellar.mintedinpe.com/bases | Bases oficiales: ventana 19–25 sep 2026, checkpoint 23 sep, elegibilidad, commit base, rúbrica y entregables. |
 
 ## Fuente del usuario
 
-`Markdown(1).md pegado`, «Proyectos de AI Agents para Stellar Odyssey Perú», sección Hito/PagoJusto: hitos, custodia condicionada, evidencia y aprobación humana. El informe contiene referencias a bases que no están presentes como documento primario en esta entrega. Sus fechas/puntuación/elegibilidad se consideran secundarias, no verificadas contra el organizador.
+`Markdown(1).md pegado`, «Proyectos de AI Agents para Stellar Odyssey Perú», sección Hito/PagoJusto: hitos, custodia condicionada, evidencia y aprobación humana. Las fechas, rúbrica y reglas generales ya se cotejaron con las bases oficiales; la inscripción y elegibilidad concreta del equipo siguen siendo hechos que debe confirmar el usuario.
 
 ## Prioridad de especificación
 

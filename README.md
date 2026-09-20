@@ -8,16 +8,16 @@ Hito es una herramienta invocada por tu agente actual, como una herramienta de g
 
 | Componente | Estado |
 |---|---|
-| Dominio TypeScript, API HTTP y persistencia SQLite | Implementados; suite local ejecutada. |
-| Interfaz web local | Implementada; comprobación HTTP, no validación visual E2E. Chromium bloqueó la navegación local por política del entorno. |
+| Dominio TypeScript, API HTTP y persistencia SQLite | Implementados; 87 pruebas core ejecutadas. |
+| Interfaz web local | Chromium 151 automatizado a 1440 y 390 px; CSP/XSS/token storage y responsive comprobados. |
 | CLI local | Implementada; comparte API y token limitado. |
-| Servidor MCP y skill | Código y configuración incluidos; transporte SDK pendiente de instalar/probar. |
-| Adaptador Stellar RPC y firma Freighter | Código incluido; dependencias, tipado, bundle y firma pendientes de validar. |
-| Contrato Soroban + 22 pruebas | Fuente incluida; no compilado ni ejecutado en este entorno. |
+| Servidor MCP y skill | SDK v1 instalado; handshake, siete tools y recorrido HTTP pasan. Integración dentro de un host de agente sigue manual. |
+| Adaptador Stellar RPC y firma Freighter | SDK/tipado/negativas y bundle pasan; extensión y firma humana reales pendientes. |
+| Contrato Soroban + 31 pruebas | fmt/clippy/tests y build WASM pasan; restauración archivada/Testnet pendientes. |
 | Despliegue y transacciones Testnet | No realizados. No hay Contract ID ni recibos inventados. |
 | x402, CI independiente, OAuth/cloud, integración Linear | Extensiones planificadas, no implementadas. |
 
-Resultado local y límites: [VALIDATION](reports/build/VALIDATION.md). Pendientes: [REMAINING_GATES](docs/REMAINING_GATES.md).
+Resultado histórico del ZIP: [VALIDATION](reports/build/VALIDATION.md). Resultado de integración local: `reports/local-20260920T190853Z/VALIDATION.md`. Pendientes: [REMAINING_GATES](docs/REMAINING_GATES.md).
 
 ## Inicio local, sin descargar dependencias
 
@@ -48,6 +48,7 @@ npm install
 npm run check:types
 npm run test:adapters
 npm run build:wallet
+npm run test:browser
 npm run configure:agent
 ```
 

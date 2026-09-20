@@ -1,6 +1,8 @@
 # Demo y requisitos del concurso
 
-El adjunto es un informe de investigación, no las bases originales. Reproduce checkpoint 23-sep-2026 23:59, entrega 25-sep-2026 23:59 Perú y rúbrica 30/25/20/15/10. **Cotejar con el organizador antes de usarlos como condición oficial.** Tampoco se verificaron aquí registro del equipo, elegibilidad, duración del video, trabajo preexistente permitido ni propiedad intelectual.
+Las bases oficiales de Stellar Odyssey Perú se cotejaron el 20-sep-2026 en `https://stellar.mintedinpe.com/bases`. Confirman checkpoint 23-sep-2026 23:59, cierre de entregables 25-sep-2026 23:59 (hora Perú), rúbrica 30/25/20/15/10, equipos de 1–4, y Testnet obligatorio. Proyectos previos son válidos si declaran el commit base y explican la funcionalidad nueva construida dentro de la ventana iniciada el 19-sep-2026. **No se verificaron la inscripción ni la elegibilidad personal del equipo.**
+
+Los cuatro entregables oficiales son: repositorio público con README, video demo funcional sin límite de duración, video pitch de máximo 3 minutos y contrato o transacción comprobable en Stellar Testnet. El video demo y el pitch son piezas distintas.
 
 ## Mensaje
 «Tu agente transforma un encargo en hitos y desarrolla con sus herramientas habituales. Hito conserva qué se acordó, qué se entregó y qué se puede autorizar a pagar en Stellar».

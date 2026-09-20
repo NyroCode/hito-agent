@@ -1,6 +1,6 @@
 # Uso de GitHub Spec Kit en este repositorio
 
-Fuente revisada: https://github.com/github/spec-kit (2026-09-20). Se inspeccionaron README, instalación y templates. No se clonó ni instaló el CLI en este contenedor por falta de salida DNS. Estos specs son autoría de la entrega, organizados según la metodología upstream; no son un resultado ficticio de ejecutar sus comandos.
+Fuente revisada: https://github.com/github/spec-kit (2026-09-20). Se verificó el release `v1.0.8` y su commit dereferenciado `0cc9a6a1159471a3108b9bad718ba17006dd6039`, además de README, instalación y templates. No se ejecutó `init --force`: estos specs son autoría de la entrega y no se presentan como salida ficticia del CLI.
 
 ## Organización preparada
 
@@ -17,7 +17,7 @@ Upstream documenta constitución una vez y Specify → Plan → Tasks → Implem
 Revisar release/tag o commit upstream y guardarlo en el informe. No se fija aquí un tag estable que no se verificó. `main` puede ser desarrollo.
 
 ```bash
-SPEC_KIT_REF=TAG_O_COMMIT_REVISADO SPEC_KIT_INTEGRATION=codex bash scripts/bootstrap-speckit.sh
+SPEC_KIT_REF=v1.0.8 SPEC_KIT_INTEGRATION=codex bash scripts/bootstrap-speckit.sh
 ```
 
 El script instala Specify desde fuente oficial fijada, inicializa una carpeta temporal de staging (ruta impresa por el script) e imprime pasos. Revisar los archivos generados y copiar solo integración/plantillas necesarias, conservando constitución y specs ya existentes. No aplicar `--force` ni eliminar trabajo. Revisar `specify version` y `specify init --help` cuando la versión seleccionada difiera.

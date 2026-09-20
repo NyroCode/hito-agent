@@ -18,15 +18,15 @@ G0: core local. G1: packages/types. G2: transporte MCP. G3: contrato. G4: pagos/
 | Pago | firma invalidada | no envío | core/payments + SDK |
 | Pago | timeout, reintento y respuesta atrasada | hash único; terminal no retrocede | core/payments |
 | Pago | concurrencia de la misma fuente | lock compartido persistente | core/payments |
-| Recuperación | READY vencido/crash PREPARING | no doble ejecución y procedimiento auditable | PENDIENTE G4 |
+| Recuperación | READY vencido/crash PREPARING | lease/fencing evita late build; terminal libera; UNKNOWN conserva lock | core/payments PASS; READY incierto sigue bloqueado |
 | MCP | initialize/list/call sobre backend real | siete tools, token limitado, stdout limpio | tests/adapters/mcp.test.ts |
 | SDK | XDR correcto/alterado, red y origen | signature check real | tests/adapters/stellar-sdk.test.ts |
 | Rust | auth sin mocks globales | rechazo de persona equivocada | contracts/.../test.rs + ampliar |
 | Rust | full lifecycle/doble funding/doble release | una transferencia por hito | contrato tests |
 | Rust | expiry/cancel/evidence changes | protección fondos presentados | contrato tests |
 | Rust | dos works simultáneos y token malicioso | aislamiento/rollback | agregar antes de producción |
-| Browser | roles, errores, responsive, CSP, refresh | estados honestos sin fuga de token | manual/Playwright local |
-| Wallet | red equivocada, denegación, cuenta incorrecta, firma expirada | no envío válido | Freighter manual |
+| Browser | roles, errores, responsive, CSP, refresh | estados honestos sin fuga de token | Chromium 151 automatizado, desktop/móvil |
+| Wallet | red equivocada, denegación, cuenta incorrecta, firma expirada | no envío válido | transporte Freighter simulado + SDK real; extensión manual pendiente |
 | Testnet | create/accept/fund/submit/approve/release | tx SUCCESS + ledger + estado + balances | receipts reales |
 | Testnet | segunda liberación/firma no autorizada | rechazo sin movimiento | receipt error + balances |
 
@@ -40,6 +40,7 @@ npm run verify:local
 npm run check:types
 npm run test:adapters
 npm run build:wallet
+npm run test:browser
 npm run contract:test
 npm run contract:build
 ```

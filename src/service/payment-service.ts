@@ -1,9 +1,11 @@
+import { randomUUID } from 'node:crypto';
 import { check } from '../domain/errors.ts';
 import { authorize } from '../domain/model.ts';
 import type { Actor,Intent } from '../domain/model.ts';
 import type { ChainPort,ChainResult } from '../stellar/port.ts';
 import { WorkService } from './work-service.ts';
 const PENDING=['SUBMITTING','SUBMITTED','UNKNOWN'];
+export const PREPARATION_LEASE_SECONDS=300;
 export class PaymentService {
   work:WorkService;chain:ChainPort;
   constructor(work:WorkService,chain:ChainPort){this.work=work;this.chain=chain;}
@@ -12,9 +14,15 @@ export class PaymentService {
     let i=this.work.intent(a,iid);const w=this.work.work(a,i.workId);authorize(a,w.projectId,true);
     if(i.status==='READY'){check((i.expiresAt??0)>this.work.now(),'EXPIRED','Reconcile this intent before preparing a new transaction',409);return {...this.work.publicIntent(i),unsignedXdr:i.unsignedXdr};}
     check(i.status==='REQUESTED','STATE','Intent is not ready to build; inspect/reconcile current state',409);
-    this.work.store.transaction(()=>{i=this.work.intent(a,iid);check(i.status==='REQUESTED','STATE','Already being prepared',409);this.work.store.acquire(i.source,i.id);i={...i,status:'PREPARING'};this.save(i);});
-    try{const p=await this.chain.prepare(i,w,this.work.project(a,w.projectId));i={...i,...p,status:'READY',error:null};this.work.store.transaction(()=>{this.save(i);this.work.store.audit(a.id,'intent.built',w.projectId,i.id,{txHash:i.txHash});});return {...this.work.publicIntent(i),unsignedXdr:i.unsignedXdr};}
-    catch(e){this.work.store.transaction(()=>{i={...i,status:'BUILD_FAILED',error:'Build/simulation failed. No signed transaction was submitted.'};this.save(i);this.work.store.unlock(i.source,i.id);});throw e;}
+    const attempt=randomUUID();
+    this.work.store.transaction(()=>{i=this.work.intent(a,iid);check(i.status==='REQUESTED','STATE','Already being prepared',409);this.work.store.acquire(i.source,i.id);i={...i,status:'PREPARING',preparingAt:this.work.now(),buildAttempt:attempt};this.save(i);});
+    try{
+      const p=await this.chain.prepare(i,w,this.work.project(a,w.projectId));
+      this.work.store.transaction(()=>{const current=this.work.intent(a,iid);check(current.status==='PREPARING'&&current.buildAttempt===attempt,'STATE','Preparation lease no longer belongs to this build',409);i={...current,...p,status:'READY',error:null,preparingAt:null,buildAttempt:null};this.save(i);this.work.store.audit(a.id,'intent.built',w.projectId,i.id,{txHash:i.txHash});});
+      return {...this.work.publicIntent(i),unsignedXdr:i.unsignedXdr};
+    }catch(e){
+      this.work.store.transaction(()=>{const current=this.work.intent(a,iid);if(current.status==='PREPARING'&&current.buildAttempt===attempt){i={...current,status:'BUILD_FAILED',error:'Build/simulation failed. No signed transaction was submitted.',preparingAt:null,buildAttempt:null};this.save(i);this.work.store.unlock(i.source,i.id);}});throw e;
+    }
   }
   async submit(a:Actor,iid:string,signedXdr:string){
     let i=this.work.intent(a,iid);const w=this.work.work(a,i.workId);authorize(a,w.projectId,true);
@@ -35,6 +43,30 @@ export class PaymentService {
     // Reading NOT_FOUND for an unsigned READY intent must not prevent signing it before expiry.
     if(r.status==='UNKNOWN'&&i.status==='READY')return this.work.publicIntent(i);
     return this.apply(a,i,r);
+  }
+  async recover(a:Actor,iid:string){
+    let i=this.work.intent(a,iid);const w=this.work.work(a,i.workId);authorize(a,w.projectId,true);
+    if(i.status==='SUCCESS'||i.status==='FAILED'||i.status==='BUILD_FAILED')return this.work.publicIntent(i);
+    if(i.status==='PREPARING'){
+      check(i.txHash===null&&i.signedXdr===null,'RECOVERY_BLOCKED','Preparation contains transaction material; keep the source lock and investigate',409);
+      check(typeof i.preparingAt==='number','RECOVERY_BLOCKED','Legacy preparation has no auditable lease timestamp; keep the source lock',409);
+      check(i.preparingAt+PREPARATION_LEASE_SECONDS<=this.work.now(),'PREPARATION_ACTIVE','Preparation lease is still active',409);
+      return this.work.store.transaction(()=>{
+        const current=this.work.intent(a,iid);
+        check(current.status==='PREPARING'&&current.buildAttempt===i.buildAttempt,'STATE','Intent changed while recovery was requested',409);
+        check(typeof current.preparingAt==='number'&&current.preparingAt+PREPARATION_LEASE_SECONDS<=this.work.now(),'PREPARATION_ACTIVE','Preparation lease is still active',409);
+        i={...current,status:'BUILD_FAILED',error:'Expired preparation recovered before any unsigned transaction was published or signed.',preparingAt:null,buildAttempt:null};
+        this.save(i);this.work.store.unlock(i.source,i.id);this.work.store.audit(a.id,'intent.preparation_recovered',w.projectId,i.id,{previousStatus:'PREPARING'});
+        return this.work.publicIntent(i);
+      });
+    }
+    check(i.status==='READY','RECOVERY_BLOCKED','Only a stale preparation or expired unsigned transaction can use recovery',409);
+    check((i.expiresAt??0)<=this.work.now(),'PREPARATION_ACTIVE','Unsigned transaction has not expired',409);
+    check(i.txHash,'STATE','No transaction hash available for reconciliation',409);
+    let r:ChainResult;try{r=await this.chain.lookup(i.txHash);}catch{r={status:'UNKNOWN',error:'RPC unavailable. No final status inferred.'};}
+    if(r.status==='SUCCESS'||r.status==='FAILED')return this.apply(a,i,r);
+    this.work.store.transaction(()=>{const current=this.work.intent(a,iid);if(current.status==='READY')this.work.store.audit(a.id,'intent.recovery_blocked',w.projectId,i.id,{status:r.status,hash:i.txHash});});
+    check(false,'RECOVERY_BLOCKED','Expired READY cannot be unlocked: UNKNOWN/NOT_FOUND does not prove the transaction was never included',409);
   }
   private apply(a:Actor,i:Intent,r:ChainResult){
     return this.work.store.transaction(()=>{

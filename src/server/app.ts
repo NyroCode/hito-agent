@@ -58,6 +58,7 @@ export function application(c:Config,work:WorkService,pay:PaymentService){
         else if(sub==='build'&&method==='POST'){fields(await readBody(req),[]);result=await pay.build(a,iid);}
         else if(sub==='submit'&&method==='POST'){const b=fields(await readBody(req),['signedXdr']);result=await pay.submit(a,iid,text(b.signedXdr,'signedXdr',100000));}
         else if(sub==='reconcile'&&method==='POST'){fields(await readBody(req),[]);result=await pay.reconcile(a,iid);}
+        else if(sub==='recover'&&method==='POST'){fields(await readBody(req),[]);result=await pay.recover(a,iid);}
         else throw new HitoError('NOT_FOUND','Route not found',404);
       }else throw new HitoError('NOT_FOUND','Route not found',404);
       respond(res,200,result);

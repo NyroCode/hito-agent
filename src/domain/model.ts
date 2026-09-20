@@ -10,7 +10,7 @@ export type CheckResult = { criterionId: string; status: 'PASS'|'FAIL'|'NOT_CHEC
 export type Delivery = { id: string; workId: string; milestoneId: string; planHash: string; artifactHash: string; reference: string; checks: CheckResult[]; provenance: 'self_reported'|'trusted_ci'; createdAt: number; evidenceHash: string };
 export const ACTIONS = ['create','accept','fund','submit','approve','release','request_cancel','cancel','refund_expired','touch'] as const;
 export type Action = typeof ACTIONS[number];
-export type Intent = { id:string; workId:string; action:Action; milestoneId:string|null; evidenceHash:string|null; source:string; status:string; createdAt:number; expiresAt:number|null; unsignedXdr:string|null; signedXdr:string|null; txHash:string|null; error:string|null; ledger:number|null };
+export type Intent = { id:string; workId:string; action:Action; milestoneId:string|null; evidenceHash:string|null; source:string; status:string; createdAt:number; expiresAt:number|null; unsignedXdr:string|null; signedXdr:string|null; txHash:string|null; error:string|null; ledger:number|null; preparingAt?:number|null; buildAttempt?:string|null };
 export type OnchainWork = { payer:string; payee:string; plan_hash:string; deadline:string|number; accepted:boolean; funded:boolean; closed:boolean; cancel_requested:boolean; milestones: { amount:string; evidence:string; has_evidence:boolean; approved:boolean; paid:boolean }[] };
 export function authorize(a:Actor,projectId:string,adminOnly=false) {
   check(!adminOnly||a.role==='admin','FORBIDDEN','Human/admin route required',403);

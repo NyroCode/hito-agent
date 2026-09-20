@@ -23,7 +23,9 @@ Solicitud estrecha con action, workId, milestoneId/evidenceHash donde aplican, s
 
 Build error: BUILD_FAILED sin firma enviada. Terminales confirmados no retroceden. READY contiene unsignedXdr y txHash; signedXdr se conserva para reconciliación después de intentar envío. Los GET públicos al agente excluyen ambos envelopes. Solo admin build entrega unsignedXdr.
 
-READY/PREPARING abandonados pueden retener source locks: recuperación administrativa segura todavía es gate pendiente. UNKNOWN no permite asumir fallo ni nuevo intento económico.
+`PREPARING` guarda `preparingAt` y un identificador interno de intento de build. Una lease de 300 segundos permite que un admin recupere el estado solo si no existen `txHash` ni envelope firmado; el build tardío queda invalidado por fencing, se audita la recuperación y se libera el source lock. Registros legacy sin timestamp permanecen bloqueados.
+
+Un `READY` vencido conserva el lock y consulta el hash original. Solo un resultado terminal `SUCCESS` o `FAILED` permite cerrar y liberar. `UNKNOWN`, `NOT_FOUND`, un checkpoint `SUBMITTING` ambiguo o una caída de RPC nunca prueban que sea seguro reconstruir. Los campos internos de fencing y los envelopes no aparecen en la proyección pública.
 
 ## SQLite
 Tabla documents con kind/id/project_id/body. Tipos separados por kind. idempotency scope+key+inputhash+response, transaction BEGIN IMMEDIATE. Mismo input/key devuelve respuesta original aun si el reloj cambió; distinto input/key es conflicto. source_locks unique(source) evita usar a la vez la misma secuencia desde este backend. WAL y busy_timeout; archivo local protegido por permisos del sistema. auditoría local no es un registro inmutable contra un admin de la máquina.
@@ -31,4 +33,4 @@ Tabla documents con kind/id/project_id/body. Tipos separados por kind. idempoten
 ## Soroban Work
 Payer/payee/planhash/deadline/total/remaining, accepted/funded/closed/cancel_requested, milestones con amount, dependency bitmask, evidence, has_evidence, approved, paid. WorkID onchain = SHA256(namespace + projectId + workId). Token inmutable en instancia, works persistentes. Sin borrado de IDs cerrados, para conservar antireplay. Extend TTL/touch y restauración son operaciones distintas.
 
-Invariantes: suma de obligaciones financiadas remanentes ≤ saldo escrow si no hay transferencias externas extra; release reduce remaining una vez; no refund de obligación presentada sin resolver; dependencia exige pago anterior; approval vincula evidence exacta. Demostrar invariantes en Rust/Testnet es gate pendiente.
+Invariantes: suma de obligaciones financiadas remanentes ≤ saldo escrow si no hay transferencias externas extra; release reduce remaining una vez; no refund de obligación presentada sin resolver; dependencia exige pago anterior; approval vincula evidence exacta. Tests Rust locales cubren lifecycle, overflow, doble release, rollback y aislamiento; Testnet/balances reales siguen pendientes.
