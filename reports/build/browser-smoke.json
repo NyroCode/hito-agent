@@ -1,0 +1,8 @@
+{
+  "status": "BLOCKED",
+  "attempted": true,
+  "executedAssertions": 0,
+  "driver": "Playwright Python / Chromium",
+  "error": "net::ERR_BLOCKED_BY_ADMINISTRATOR navigating http://127.0.0.1:8787/",
+  "meaning": "Browser end-to-end and responsive checks are NOT validated. HTTP server tested separately by node:test. No access policy workaround attempted."
+}

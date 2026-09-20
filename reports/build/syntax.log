@@ -1,0 +1,5 @@
+
+> hito-agent-native@0.1.0 check
+> node scripts/check-syntax.mjs
+
+{"syntaxFiles":30,"failures":0,"notTypechecking":true}

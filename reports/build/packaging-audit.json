@@ -1,0 +1,21 @@
+{
+  "jsonFilesParsed": 10,
+  "schemaReferences": "resolved",
+  "markdownLinks": "resolved",
+  "mcpToolsInDocumentationAndSource": 7,
+  "freshDirectoryTestExitCode": 0,
+  "runtimeTokensExcluded": true,
+  "sourceLockRecoveryGate": "PENDING",
+  "browserE2E": "BLOCKED",
+  "vendorCodeCopied": false,
+  "excluded": [
+    ".env",
+    ".hito-agent.env",
+    ".hito/",
+    "node_modules/",
+    "contracts/target/",
+    ".git/",
+    "config/generated/",
+    "reports/local-*"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "status": "NOT_RUN",
+  "network": "Test SDF Network ; September 2015",
+  "contractId": null,
+  "wasmSha256": null,
+  "asset": {
+    "contractId": null,
+    "issuer": null,
+    "decimals": null,
+    "source": null
+  },
+  "parties": {
+    "payer": null,
+    "payee": null
+  },
+  "workId": null,
+  "planHash": null,
+  "transactions": [],
+  "balanceBefore": null,
+  "balanceAfter": null,
+  "negativeCase": null,
+  "notes": "Replace null only with verified public testnet data. No private keys."
+}

@@ -1,0 +1,474 @@
+TAP version 13
+# (node:579) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:579) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# Subtest: amount rejects 0
+ok 1 - amount rejects 0
+  ---
+  duration_ms: 19.458453
+  type: 'test'
+  ...
+# Subtest: amount rejects -1
+ok 2 - amount rejects -1
+  ---
+  duration_ms: 0.483377
+  type: 'test'
+  ...
+# Subtest: amount rejects 1.5
+ok 3 - amount rejects 1.5
+  ---
+  duration_ms: 0.135738
+  type: 'test'
+  ...
+# Subtest: amount rejects 1e6
+ok 4 - amount rejects 1e6
+  ---
+  duration_ms: 0.202617
+  type: 'test'
+  ...
+# Subtest: amount rejects 01
+ok 5 - amount rejects 01
+  ---
+  duration_ms: 0.333379
+  type: 'test'
+  ...
+# Subtest: amount rejects +1
+ok 6 - amount rejects +1
+  ---
+  duration_ms: 10.631829
+  type: 'test'
+  ...
+# Subtest: amount rejects  1
+ok 7 - amount rejects  1
+  ---
+  duration_ms: 0.345533
+  type: 'test'
+  ...
+# Subtest: amount rejects 1
+ok 8 - amount rejects 1
+  ---
+  duration_ms: 0.124798
+  type: 'test'
+  ...
+# Subtest: amount rejects null
+ok 9 - amount rejects null
+  ---
+  duration_ms: 0.603741
+  type: 'test'
+  ...
+# Subtest: amount rejects undefined
+ok 10 - amount rejects undefined
+  ---
+  duration_ms: 9.591767
+  type: 'test'
+  ...
+# Subtest: amount rejects 170141183460469231731687303715884105728
+ok 11 - amount rejects 170141183460469231731687303715884105728
+  ---
+  duration_ms: 0.348558
+  type: 'test'
+  ...
+# Subtest: amount exact above Number safe integer
+ok 12 - amount exact above Number safe integer
+  ---
+  duration_ms: 0.331418
+  type: 'test'
+  ...
+# Subtest: sum overflow
+ok 13 - sum overflow
+  ---
+  duration_ms: 0.198418
+  type: 'test'
+  ...
+# Subtest: canonical stable regardless object order
+ok 14 - canonical stable regardless object order
+  ---
+  duration_ms: 1.370042
+  type: 'test'
+  ...
+# Subtest: canonical rejects undefined
+ok 15 - canonical rejects undefined
+  ---
+  duration_ms: 0.151977
+  type: 'test'
+  ...
+# Subtest: canonical rejects float
+ok 16 - canonical rejects float
+  ---
+  duration_ms: 0.111835
+  type: 'test'
+  ...
+# Subtest: correct plan preserves all criteria
+ok 17 - correct plan preserves all criteria
+  ---
+  duration_ms: 9.098089
+  type: 'test'
+  ...
+# Subtest: budget must equal milestone amounts
+ok 18 - budget must equal milestone amounts
+  ---
+  duration_ms: 0.969745
+  type: 'test'
+  ...
+# Subtest: cycle or forward dependency rejected
+ok 19 - cycle or forward dependency rejected
+  ---
+  duration_ms: 0.342075
+  type: 'test'
+  ...
+# Subtest: duplicate milestone rejected
+ok 20 - duplicate milestone rejected
+  ---
+  duration_ms: 0.32477
+  type: 'test'
+  ...
+# Subtest: duplicate criterion rejected
+ok 21 - duplicate criterion rejected
+  ---
+  duration_ms: 0.253359
+  type: 'test'
+  ...
+# Subtest: deadline must be future
+ok 22 - deadline must be future
+  ---
+  duration_ms: 0.270137
+  type: 'test'
+  ...
+# Subtest: unknown plan field rejected
+ok 23 - unknown plan field rejected
+  ---
+  duration_ms: 0.231723
+  type: 'test'
+  ...
+# Subtest: persist draft without embedded model
+ok 24 - persist draft without embedded model
+  ---
+  duration_ms: 59.08175
+  type: 'test'
+  ...
+# Subtest: idempotent create produces one work
+ok 25 - idempotent create produces one work
+  ---
+  duration_ms: 7.032991
+  type: 'test'
+  ...
+# Subtest: idempotency rejects changed body
+ok 26 - idempotency rejects changed body
+  ---
+  duration_ms: 2.215072
+  type: 'test'
+  ...
+# Subtest: optimistic version conflict
+ok 27 - optimistic version conflict
+  ---
+  duration_ms: 8.211505
+  type: 'test'
+  ...
+# Subtest: agent cannot seal
+ok 28 - agent cannot seal
+  ---
+  duration_ms: 6.44103
+  type: 'test'
+  ...
+# Subtest: sealed work cannot be rewritten
+ok 29 - sealed work cannot be rewritten
+  ---
+  duration_ms: 7.878356
+  type: 'test'
+  ...
+# Subtest: agent cannot register payment destinations
+ok 30 - agent cannot register payment destinations
+  ---
+  duration_ms: 6.149017
+  type: 'test'
+  ...
+# Subtest: project visibility scoped
+ok 31 - project visibility scoped
+  ---
+  duration_ms: 1.902644
+  type: 'test'
+  ...
+# Subtest: commitment binds project parties
+ok 32 - commitment binds project parties
+  ---
+  duration_ms: 20.347696
+  type: 'test'
+  ...
+# Subtest: commitment binds network contract configuration
+ok 33 - commitment binds network contract configuration
+  ---
+  duration_ms: 3.113905
+  type: 'test'
+  ...
+# Subtest: no delivery means not ready
+ok 34 - no delivery means not ready
+  ---
+  duration_ms: 3.475169
+  type: 'test'
+  ...
+# Subtest: PASS yields human-review readiness, never acceptance
+ok 35 - PASS yields human-review readiness, never acceptance
+  ---
+  duration_ms: 4.368813
+  type: 'test'
+  ...
+# Subtest: FAIL blocks readiness and approve request
+ok 36 - FAIL blocks readiness and approve request
+  ---
+  duration_ms: 7.986995
+  type: 'test'
+  ...
+# Subtest: NOT_CHECKED blocks readiness and approve request
+ok 37 - NOT_CHECKED blocks readiness and approve request
+  ---
+  duration_ms: 2.886779
+  type: 'test'
+  ...
+# Subtest: cannot assert trusted provenance from API payload
+ok 38 - cannot assert trusted provenance from API payload
+  ---
+  duration_ms: 2.232698
+  type: 'test'
+  ...
+# Subtest: trusted CI requirement fails closed without verifier integration
+ok 39 - trusted CI requirement fails closed without verifier integration
+  ---
+  duration_ms: 3.982196
+  type: 'test'
+  ...
+# Subtest: all mandatory criteria require one result
+ok 40 - all mandatory criteria require one result
+  ---
+  duration_ms: 2.406272
+  type: 'test'
+  ...
+# Subtest: unknown criterion rejected
+ok 41 - unknown criterion rejected
+  ---
+  duration_ms: 4.113386
+  type: 'test'
+  ...
+# Subtest: artifact must use strong exact digest
+ok 42 - artifact must use strong exact digest
+  ---
+  duration_ms: 2.121658
+  type: 'test'
+  ...
+# Subtest: javascript evidence URL rejected
+ok 43 - javascript evidence URL rejected
+  ---
+  duration_ms: 2.689934
+  type: 'test'
+  ...
+# Subtest: new delivery changes evidence commitment
+ok 44 - new delivery changes evidence commitment
+  ---
+  duration_ms: 3.69293
+  type: 'test'
+  ...
+# Subtest: failed update rolls back audit and work
+ok 45 - failed update rolls back audit and work
+  ---
+  duration_ms: 5.254852
+  type: 'test'
+  ...
+# Subtest: progress does not become payment status
+ok 46 - progress does not become payment status
+  ---
+  duration_ms: 3.480077
+  type: 'test'
+  ...
+# (node:580) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:580) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# Subtest: health honestly says no simulated payments
+ok 47 - health honestly says no simulated payments
+  ---
+  duration_ms: 84.707967
+  type: 'test'
+  ...
+# Subtest: API requires authentication
+ok 48 - API requires authentication
+  ---
+  duration_ms: 13.120719
+  type: 'test'
+  ...
+# Subtest: host defense rejects DNS rebinding
+not ok 49 - host defense rejects DNS rebinding
+  ---
+  duration_ms: 10.009808
+  type: 'test'
+  location: '/mnt/data/hito-agent-native/tests/core/http.test.ts:6:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    200 !== 403
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 403
+  actual: 200
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///mnt/data/hito-agent-native/tests/core/http.test.ts:6:87)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: cross-origin even with token is rejected
+ok 50 - cross-origin even with token is rejected
+  ---
+  duration_ms: 12.857163
+  type: 'test'
+  ...
+# Subtest: agent can create structured draft over actual HTTP
+ok 51 - agent can create structured draft over actual HTTP
+  ---
+  duration_ms: 21.707159
+  type: 'test'
+  ...
+# Subtest: sealing over agent HTTP rejected
+ok 52 - sealing over agent HTTP rejected
+  ---
+  duration_ms: 13.103834
+  type: 'test'
+  ...
+# Subtest: missing idempotency key rejected
+ok 53 - missing idempotency key rejected
+  ---
+  duration_ms: 7.145162
+  type: 'test'
+  ...
+# Subtest: wrong content type rejected
+ok 54 - wrong content type rejected
+  ---
+  duration_ms: 6.332127
+  type: 'test'
+  ...
+# Subtest: payload limit
+ok 55 - payload limit
+  ---
+  duration_ms: 21.38921
+  type: 'test'
+  ...
+# Subtest: public UI has restrictive CSP and no embedded tokens
+ok 56 - public UI has restrictive CSP and no embedded tokens
+  ---
+  duration_ms: 14.932719
+  type: 'test'
+  ...
+# (node:581) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:581) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# Subtest: agent can prepare but cannot build or sign
+ok 57 - agent can prepare but cannot build or sign
+  ---
+  duration_ms: 35.339565
+  type: 'test'
+  ...
+# Subtest: intent idempotency
+ok 58 - intent idempotency
+  ---
+  duration_ms: 2.008905
+  type: 'test'
+  ...
+# Subtest: destinations cannot be injected
+ok 59 - destinations cannot be injected
+  ---
+  duration_ms: 4.275842
+  type: 'test'
+  ...
+# Subtest: successful build locks wallet and returns unsigned envelope
+ok 60 - successful build locks wallet and returns unsigned envelope
+  ---
+  duration_ms: 2.800305
+  type: 'test'
+  ...
+# Subtest: bad signature never broadcasts
+ok 61 - bad signature never broadcasts
+  ---
+  duration_ms: 2.566696
+  type: 'test'
+  ...
+# Subtest: agent cannot submit even if envelope supplied
+ok 62 - agent cannot submit even if envelope supplied
+  ---
+  duration_ms: 1.951372
+  type: 'test'
+  ...
+# Subtest: submitted is NOT successful
+ok 63 - submitted is NOT successful
+  ---
+  duration_ms: 3.074728
+  type: 'test'
+  ...
+# Subtest: network timeout stays UNKNOWN and retry never creates second payment
+ok 64 - network timeout stays UNKNOWN and retry never creates second payment
+  ---
+  duration_ms: 4.866339
+  type: 'test'
+  ...
+# Subtest: confirmed success releases source lock
+ok 65 - confirmed success releases source lock
+  ---
+  duration_ms: 6.3575
+  type: 'test'
+  ...
+# Subtest: terminal success cannot regress
+ok 66 - terminal success cannot regress
+  ---
+  duration_ms: 4.3823
+  type: 'test'
+  ...
+# Subtest: confirmed failure is explicit
+ok 67 - confirmed failure is explicit
+  ---
+  duration_ms: 23.038838
+  type: 'test'
+  ...
+# Subtest: expired envelope cannot be signed
+ok 68 - expired envelope cannot be signed
+  ---
+  duration_ms: 4.712206
+  type: 'test'
+  ...
+# Subtest: public intent never exposes signed envelope
+ok 69 - public intent never exposes signed envelope
+  ---
+  duration_ms: 8.060813
+  type: 'test'
+  ...
+# Subtest: offline mode never simulates payments
+ok 70 - offline mode never simulates payments
+  ---
+  duration_ms: 3.163428
+  type: 'test'
+  ...
+# Subtest: durable unknown submission survives process restart
+ok 71 - durable unknown submission survives process restart
+  ---
+  duration_ms: 17.759821
+  type: 'test'
+  ...
+# Subtest: contract arguments include dependency masks and integer strings
+ok 72 - contract arguments include dependency masks and integer strings
+  ---
+  duration_ms: 4.356887
+  type: 'test'
+  ...
+# Subtest: wrong delivery hash cannot prepare acceptance
+ok 73 - wrong delivery hash cannot prepare acceptance
+  ---
+  duration_ms: 4.123897
+  type: 'test'
+  ...
+1..73
+# tests 73
+# suites 0
+# pass 72
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1133.449265

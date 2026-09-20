@@ -1,0 +1,1391 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Hito local API",
+    "version": "0.1.0",
+    "description": "Design contract matches implemented routes. Loopback only. Structured responses documented in data-model.md; 200 success, explicit errors. Signature never available through agent token."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8787"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "ProjectInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "payer": {
+            "type": "string",
+            "pattern": "^G[A-Z2-7]{55}$"
+          },
+          "payee": {
+            "type": "string",
+            "pattern": "^G[A-Z2-7]{55}$"
+          },
+          "tokenContract": {
+            "type": "string",
+            "pattern": "^C[A-Z2-7]{55}$"
+          },
+          "tokenLabel": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "decimals": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "payer",
+          "payee",
+          "tokenContract",
+          "tokenLabel",
+          "decimals"
+        ],
+        "additionalProperties": false
+      },
+      "Plan": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "deadline": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Unix seconds; > now and <= now + 366 days enforced by runtime."
+          },
+          "totalUnits": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*$",
+            "description": "Positive integer token base units; runtime additionally enforces i128 and exact total."
+          },
+          "milestones": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "amountUnits": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*$",
+                  "description": "Positive integer token base units; runtime additionally enforces i128 and exact total."
+                },
+                "criteria": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 12,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+                      },
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      },
+                      "evidence": {
+                        "enum": [
+                          "self_reported",
+                          "trusted_ci"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "text",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "dependsOn": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "amountUnits",
+                "criteria",
+                "dependsOn"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "deadline",
+          "totalUnits",
+          "milestones"
+        ],
+        "additionalProperties": false
+      },
+      "SaveWork": {
+        "type": "object",
+        "properties": {
+          "workId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "plan": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 8000
+              },
+              "deadline": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Unix seconds; > now and <= now + 366 days enforced by runtime."
+              },
+              "totalUnits": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]*$",
+                "description": "Positive integer token base units; runtime additionally enforces i128 and exact total."
+              },
+              "milestones": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 160
+                    },
+                    "amountUnits": {
+                      "type": "string",
+                      "pattern": "^[1-9][0-9]*$",
+                      "description": "Positive integer token base units; runtime additionally enforces i128 and exact total."
+                    },
+                    "criteria": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 12,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 1000
+                          },
+                          "evidence": {
+                            "enum": [
+                              "self_reported",
+                              "trusted_ci"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "text",
+                          "evidence"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "dependsOn": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+                      },
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "amountUnits",
+                    "criteria",
+                    "dependsOn"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "title",
+              "description",
+              "deadline",
+              "totalUnits",
+              "milestones"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "plan"
+        ],
+        "additionalProperties": false
+      },
+      "DeliveryInput": {
+        "type": "object",
+        "properties": {
+          "milestoneId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+          },
+          "artifactHash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "reference": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2000
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "criterionId": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+                },
+                "status": {
+                  "enum": [
+                    "PASS",
+                    "FAIL",
+                    "NOT_CHECKED"
+                  ]
+                },
+                "detail": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1500
+                }
+              },
+              "required": [
+                "criterionId",
+                "status",
+                "detail"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 12
+          }
+        },
+        "required": [
+          "milestoneId",
+          "artifactHash",
+          "reference",
+          "checks"
+        ],
+        "additionalProperties": false
+      },
+      "ProgressInput": {
+        "type": "object",
+        "properties": {
+          "milestoneId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+          },
+          "status": {
+            "enum": [
+              "TODO",
+              "IN_PROGRESS",
+              "BLOCKED",
+              "READY_FOR_REVIEW"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "milestoneId",
+          "status",
+          "note"
+        ],
+        "additionalProperties": false
+      },
+      "IntentInput": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "enum": [
+              "create",
+              "accept",
+              "fund",
+              "submit",
+              "approve",
+              "release",
+              "request_cancel",
+              "cancel",
+              "refund_expired",
+              "touch"
+            ]
+          },
+          "milestoneId": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+          },
+          "evidenceHash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "summary": "Honest mode and no simulated payments",
+        "operationId": "get__healthz",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/info": {
+      "get": {
+        "summary": "Role, mode and configured contract",
+        "operationId": "get__api_info",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        }
+      }
+    },
+    "/api/projects": {
+      "get": {
+        "summary": "List scoped projects",
+        "operationId": "get__api_projects",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        }
+      },
+      "post": {
+        "summary": "Register immutable project",
+        "operationId": "post__api_projects",
+        "x-admin-only": true,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/{projectId}/works": {
+      "get": {
+        "summary": "List works",
+        "operationId": "get__api_projects_projectId_works",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ]
+      },
+      "post": {
+        "summary": "Save draft created by the host model",
+        "operationId": "post__api_projects_projectId_works",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveWork"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/works/{workId}": {
+      "get": {
+        "summary": "Work, project, deliveries, progress and intents",
+        "operationId": "get__api_works_workId",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ]
+      }
+    },
+    "/api/works/{workId}/seal": {
+      "post": {
+        "summary": "Seal draft without moving money",
+        "operationId": "post__api_works_workId_seal",
+        "x-admin-only": true,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expectedVersion": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "expectedVersion"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/works/{workId}/deliveries": {
+      "post": {
+        "summary": "Record self-reported delivery",
+        "operationId": "post__api_works_workId_deliveries",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeliveryInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/works/{workId}/progress": {
+      "post": {
+        "summary": "Record progress; not acceptance",
+        "operationId": "post__api_works_workId_progress",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgressInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/works/{workId}/readiness": {
+      "get": {
+        "summary": "Evidence completeness, not acceptance",
+        "operationId": "get__api_works_workId_readiness",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          },
+          {
+            "name": "milestoneId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ]
+      }
+    },
+    "/api/works/{workId}/intents": {
+      "get": {
+        "summary": "List safe intent projections",
+        "operationId": "get__api_works_workId_intents",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ]
+      },
+      "post": {
+        "summary": "Prepare request without signature",
+        "operationId": "post__api_works_workId_intents",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntentInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/works/{workId}/chain": {
+      "get": {
+        "summary": "Read actual contract state; disabled offline",
+        "operationId": "get__api_works_workId_chain",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "workId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ]
+      }
+    },
+    "/api/intents/{intentId}": {
+      "get": {
+        "summary": "Read safe status",
+        "operationId": "get__api_intents_intentId",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "intentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ]
+      }
+    },
+    "/api/intents/{intentId}/build": {
+      "post": {
+        "summary": "Build and simulate XDR",
+        "operationId": "post__api_intents_intentId_build",
+        "x-admin-only": true,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "intentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/intents/{intentId}/submit": {
+      "post": {
+        "summary": "Validate and submit the exact human-signed envelope",
+        "operationId": "post__api_intents_intentId_submit",
+        "x-admin-only": true,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "intentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "signedXdr": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100000
+                  }
+                },
+                "required": [
+                  "signedXdr"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/intents/{intentId}/reconcile": {
+      "post": {
+        "summary": "Query original hash; never re-pay",
+        "operationId": "post__api_intents_intentId_reconcile",
+        "x-admin-only": false,
+        "responses": {
+          "200": {
+            "description": "Successful structured result; see data-model.md."
+          },
+          "400": {
+            "description": "Input rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing token"
+          },
+          "403": {
+            "description": "Role/scope/Host/Origin rejected"
+          },
+          "409": {
+            "description": "State/version/idempotency conflict"
+          },
+          "503": {
+            "description": "Testnet unavailable or offline mode"
+          }
+        },
+        "parameters": [
+          {
+            "name": "intentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

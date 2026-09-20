@@ -1,0 +1,11 @@
+[
+  {
+    "id": "demo",
+    "name": "Demo local · datos sintéticos",
+    "payer": "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "payee": "GBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    "tokenContract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "tokenLabel": "TOKEN FICTICIO",
+    "decimals": 7
+  }
+]

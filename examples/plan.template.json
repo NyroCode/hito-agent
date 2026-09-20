@@ -1,0 +1,23 @@
+{
+  "plan": {
+    "title": "Importación sin duplicados",
+    "description": "Ejemplo. Ajustar criterios y presupuesto a lo acordado antes de guardarlo.",
+    "deadline": 1798761600,
+    "totalUnits": "100000000",
+    "milestones": [
+      {
+        "id": "importacion",
+        "title": "Carga con reintentos seguros",
+        "amountUnits": "100000000",
+        "dependsOn": [],
+        "criteria": [
+          {
+            "id": "no-duplicados",
+            "text": "El segundo envío del mismo archivo no crea registros adicionales.",
+            "evidence": "self_reported"
+          }
+        ]
+      }
+    ]
+  }
+}

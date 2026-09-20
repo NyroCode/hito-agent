@@ -1,0 +1,12 @@
+import { config } from './config.ts';
+import { application } from './app.ts';
+import { Database } from '../storage/database.ts';
+import { WorkService } from '../service/work-service.ts';
+import { PaymentService } from '../service/payment-service.ts';
+import { offlineChain } from '../stellar/offline.ts';
+const c=config();const db=new Database(c.db);const work=new WorkService(db,c.contractId);
+const chain=c.mode==='testnet'?await (await import('../stellar/adapter.ts')).stellarChain(c.contractId,c.rpcUrl):offlineChain();
+const server=application(c,work,new PaymentService(work,chain));
+server.requestTimeout=20000;server.headersTimeout=10000;
+server.listen(c.port,'127.0.0.1',()=>console.log(`Hito: ${c.origin} | ${c.mode} | NO real funds | tokens not logged`));
+for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>server.close(()=>{db.close();process.exit(0);}));

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Hito"
+  short_description: "Hitos, entregas y preparación de pagos Testnet"
+  default_prompt: "Usa Hito para organizar este trabajo y preparar sus hitos y condiciones de pago."
+policy:
+  allow_implicit_invocation: false

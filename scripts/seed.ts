@@ -1,0 +1,8 @@
+import { apiClient } from '../src/client/api.ts';
+const api=apiClient(process.env.HITO_ORIGIN??'http://127.0.0.1:8787',process.env.HITO_ADMIN_TOKEN??'');
+const info=await api('/api/info');if(info.mode!=='local')throw new Error('Synthetic seed is forbidden in Testnet mode');
+const project={id:'demo',name:'Demo local · datos sintéticos',payer:'G'+'A'.repeat(55),payee:'G'+'B'.repeat(55),tokenContract:'C'+'A'.repeat(55),tokenLabel:'TOKEN FICTICIO',decimals:7};
+try{await api('/api/projects',project,'demo-project-v1');}catch(e){if(!(e instanceof Error&&e.message.includes('already exists')))throw e;}
+const existing=await api('/api/projects/demo/works');if(existing.length){console.log('Demo already has a work; no duplicate created.');process.exit(0);}
+const plan={title:'Importación con reintentos seguros',description:'Ejemplo sintético de un trabajo que el agente organiza en hitos. No hay cliente, verificación ni dinero real en esta demo local.',deadline:Math.floor(Date.now()/1000)+7*86400,totalUnits:'100000000',milestones:[{id:'importacion',title:'Importación sin duplicados',amountUnits:'40000000',dependsOn:[],criteria:[{id:'dedupe',text:'El segundo envío del mismo archivo no crea registros adicionales.',evidence:'self_reported'}]},{id:'permisos',title:'Permisos y documentación',amountUnits:'60000000',dependsOn:['importacion'],criteria:[{id:'roles',text:'Un usuario no autorizado no puede importar y no se modifican los registros.',evidence:'self_reported'},{id:'docs',text:'La documentación describe el formato de entrada y la receta de prueba.',evidence:'self_reported'}]}]};
+const w=await api('/api/projects/demo/works',{plan},'demo-work-v1');console.log(`Created synthetic draft ${w.id}. Use the UI to inspect; nothing signed or funded.`);

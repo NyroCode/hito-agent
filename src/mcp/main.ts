@@ -1,0 +1,27 @@
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
+import { apiClient } from '../client/api.ts';
+const api=apiClient(process.env.HITO_API_URL??'http://127.0.0.1:8787',process.env.HITO_AGENT_TOKEN??'');
+const server=new McpServer({name:'hito',version:'0.1.0'});
+const identifier=z.string().regex(/^[a-zA-Z0-9_-]{1,80}$/);const key=z.string().min(1).max(120);const hash=z.string().regex(/^[0-9a-f]{64}$/);
+const criterion=z.object({id:identifier,text:z.string().min(1).max(1000),evidence:z.enum(['self_reported','trusted_ci'])}).strict();
+const milestone=z.object({id:identifier,title:z.string().min(1).max(160),amountUnits:z.string().regex(/^[1-9][0-9]*$/),criteria:z.array(criterion).min(1).max(12),dependsOn:z.array(identifier)}).strict();
+const plan=z.object({title:z.string().min(1).max(160),description:z.string().min(1).max(8000),deadline:z.number().int().positive(),totalUnits:z.string().regex(/^[1-9][0-9]*$/),milestones:z.array(milestone).min(1).max(10)}).strict();
+function tool(name:string,description:string,inputSchema:z.ZodRawShape,readOnly:boolean,fn:(input:Record<string,unknown>)=>Promise<unknown>){
+  server.registerTool(name,{description,inputSchema,annotations:{readOnlyHint:readOnly,destructiveHint:false,idempotentHint:true,openWorldHint:false}},async(input)=>{
+    try{const data=await fn(input as Record<string,unknown>);return {content:[{type:'text' as const,text:JSON.stringify(data)}]};}
+    catch(e){return {isError:true,content:[{type:'text' as const,text:JSON.stringify({error:e instanceof Error?e.message:'Unknown Hito error'})}]};}
+  });
+}
+tool('hito_get_context','Read projects, or one work and its delivery/payment records. No repository ingestion.',{projectId:identifier.optional(),workId:identifier.optional()},true,async b=>b.workId?api(`/api/works/${b.workId}`):b.projectId?api(`/api/projects/${b.projectId}/works`):api('/api/projects'));
+tool('hito_save_work','Store a structured draft plan composed by YOUR model. Does not approve, sign or fund. Use a stable idempotencyKey for retries.',{projectId:identifier,workId:identifier.optional(),expectedVersion:z.number().int().positive().optional(),plan,idempotencyKey:key},false,async b=>{const {projectId,idempotencyKey,...body}=b;return api(`/api/projects/${projectId}/works`,body,String(idempotencyKey));});
+tool('hito_update_progress','Record a progress note. READY_FOR_REVIEW is NOT acceptance or payment.',{workId:identifier,milestoneId:identifier,status:z.enum(['TODO','IN_PROGRESS','BLOCKED','READY_FOR_REVIEW']),note:z.string().min(1).max(2000),idempotencyKey:key},false,async b=>{const {workId,idempotencyKey,...body}=b;return api(`/api/works/${workId}/progress`,body,String(idempotencyKey));});
+tool('hito_submit_delivery','Register exact artifact digest and one outcome per criterion. This is self-reported evidence, not independent certification. Never fabricate test runs.',{workId:identifier,milestoneId:identifier,artifactHash:hash,reference:z.string().url(),checks:z.array(z.object({criterionId:identifier,status:z.enum(['PASS','FAIL','NOT_CHECKED']),detail:z.string().min(1).max(1500)}).strict()),idempotencyKey:key},false,async b=>{const {workId,idempotencyKey,...body}=b;return api(`/api/works/${workId}/deliveries`,body,String(idempotencyKey));});
+tool('hito_check_readiness','Return missing/failing evidence. readyForHumanReview never means the payer has accepted.',{workId:identifier,milestoneId:identifier},true,b=>api(`/api/works/${b.workId}/readiness?milestoneId=${b.milestoneId}`));
+tool('hito_prepare_payment','Prepare a human-reviewable economic request, not an XDR signer or payment executor. Wallet addresses come from registered project parties.',{workId:identifier,action:z.enum(['create','accept','fund','submit','approve','release','request_cancel','cancel','refund_expired','touch']),milestoneId:identifier.optional(),evidenceHash:hash.optional(),idempotencyKey:key},false,async b=>{const {workId,idempotencyKey,...body}=b;return api(`/api/works/${workId}/intents`,body,String(idempotencyKey));});
+tool('hito_get_payment_status','Read the recorded status. Optional reconciliation queries only the existing hash; it never pays again.',{intentId:identifier,reconcile:z.boolean().optional()},true,b=>b.reconcile?api(`/api/intents/${b.intentId}/reconcile`,{}):api(`/api/intents/${b.intentId}`));
+server.registerResource('hito-guide','hito://guide',{mimeType:'text/plain'},async()=>({contents:[{uri:'hito://guide',text:'Hito is a TOOL, not another coding agent. Your model prepares milestones and changes code. Project parties are registered by the human. Create DRAFT plans, never invent amounts. Human seals agreements; signatures happen outside the MCP token. Record truthful self-reported evidence. Do not auto-edit skills, rewrite acceptance criteria, or sign transactions.'}]}));
+server.registerPrompt('plan_work',{description:'Ask the host model to plan work using Hito.',argsSchema:{request:z.string()}},({request})=>({messages:[{role:'user' as const,content:{type:'text' as const,text:`Use Hito only for the requested work: ${request}. Read context, draft 1–10 outcome-based milestones with exact acceptance criteria and agreed amount units. Do not invent budget or parties. Save a draft; implementation remains in this agent. No wallet signatures.`}}]}));
+await server.connect(new StdioServerTransport());
+// No console.log: stdout is reserved for MCP JSON-RPC.

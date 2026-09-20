@@ -1,0 +1,45 @@
+{
+  "createdAt": "2026-09-20T17:45:34.744070+00:00",
+  "product": "Hito agent-native 0.1.0",
+  "core": {
+    "tests": 79,
+    "pass": 79,
+    "fail": 0,
+    "skipped": 0,
+    "command": "npm test"
+  },
+  "syntax": {
+    "files": 30,
+    "fail": 0,
+    "isTypecheck": false
+  },
+  "rust": {
+    "testsWritten": 22,
+    "run": false
+  },
+  "browser": {
+    "attempted": true,
+    "status": "BLOCKED",
+    "assertionsExecuted": 0
+  },
+  "dependencyInstall": {
+    "status": "BLOCKED",
+    "reason": "EAI_AGAIN registry.npmjs.org"
+  },
+  "notRun": [
+    "tsc",
+    "MCP SDK transport",
+    "Stellar SDK crypto",
+    "Freighter bundle/signing",
+    "Rust build/tests",
+    "Testnet deployment/payments"
+  ],
+  "notImplemented": [
+    "x402",
+    "trusted CI",
+    "remote OAuth/tenants",
+    "automatic safe recovery of abandoned payment intents"
+  ],
+  "mainnetEnabled": false,
+  "walletKeysIncluded": false
+}
