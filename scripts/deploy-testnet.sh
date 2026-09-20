@@ -4,7 +4,7 @@ set -euo pipefail
 : "${HITO_DEPLOYER:?Set the name of your dedicated TESTNET Stellar CLI identity}"
 : "${HITO_ALLOW_TESTNET_DEPLOY:?Set HITO_ALLOW_TESTNET_DEPLOY=yes after reviewing the contract and test results}"
 [[ "$HITO_ALLOW_TESTNET_DEPLOY" == yes ]] || exit 1
-if [ -d "/tmp/hito-rustup-isolated-20260920/cargo/bin" ]; then
+if [ -d "/tmp/hito-rustup-isolated-20260920/cargo/bin" ] && [ -z "${CARGO_HOME:-}" ]; then
   export RUSTUP_HOME="/tmp/hito-rustup-isolated-20260920/rustup"
   export CARGO_HOME="/tmp/hito-rustup-isolated-20260920/cargo"
   export PATH="/tmp/hito-rustup-isolated-20260920/cargo/bin:$PATH"

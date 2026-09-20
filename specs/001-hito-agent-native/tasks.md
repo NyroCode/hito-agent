@@ -24,23 +24,23 @@ Convención: `[x]` implica trabajo fuente comprobado dentro del alcance señalad
 - [x] T020 [P] Revisar/resolver pins y generar `package-lock.json`; registrar `docs/DEPENDENCIES.md`.
 - [x] T021 [P] `npm run check:types`; corregir tipos/API en `src/stellar`, `src/mcp`, `src/wallet` contra libs instaladas.
 - [x] T022 [US1] Ejecutar `tests/adapters/mcp.test.ts`, ampliar save/delivery/idempotencia real del transporte.
-- [ ] T023 [US1] Configurar cliente mediante `scripts/configure-agent.mjs`, verificar siete herramientas y scope limitado.
-- [ ] T024 [US2] Probar skill explícita `.agents/skills/hito` sin nuevas reglas globales/autoloops.
-- [ ] T025 Converge de US1/US2 con transcript sanitizado, no mensaje sintético de agente.
+- [x] T023 [US1] Configurar cliente mediante `scripts/configure-agent.mjs`, verificar siete herramientas y scope limitado.
+- [x] T024 [US2] Probar skill explícita `.agents/skills/hito` sin nuevas reglas globales/autoloops.
+- [x] T025 Converge de US1/US2 con transcript sanitizado, no mensaje sintético de agente.
 
 ## Fase 4 — Contrato y SDK
 - [x] T030 [P] Instalar/verificar toolchain Rust aislada y generar `contracts/Cargo.lock`; Stellar CLI sigue pendiente para deploy.
 - [x] T031 [US3] fmt/clippy/test/build de `contracts/hito-escrow` (31 tests ejecutados).
 - [x] T032 [US3] Ampliar auth negativos mediante auth tree de rol exacto; no solo mocks globales.
 - [x] T033 [US3] Probar dos works y balances/rollback, edge cases de cero/suma/fechas/dependencias.
-- [ ] T034 [US4] Validar cancelación/expiry/protección de entregas, TTL y restauración.
+- [x] T034 [US4] Validar cancelación/expiry/protección de entregas, TTL y restauración.
 - [x] T035 [US3] Ejecutar `tests/adapters/stellar-sdk.test.ts` y pruebas de firma/cuerpo/red con SDK real y RPC tipado simulado.
 - [x] T036 [US3] Revisar conversión contractArguments/ABI y native ScVal con SDK instalado.
 
 ## Fase 5 — Wallet y recuperación
 - [x] T040 [P] Build de wallet y navegador Chromium real: `src/wallet/entry.ts`, `public/`.
 - [x] T041 [US3] Denegación, wallet/red equivocada y firma/cuerpo alterado (transporte wallet simulado + crypto SDK real; extensión pendiente).
-- [ ] T042 [US4] Implementar recuperación segura READY/PREPARING, timebounds y estados de crash; no borrar lock manualmente.
+- [x] T042 [US4] Implementar recuperación segura READY/PREPARING, timebounds y estados de crash; no borrar lock manualmente.
 - [x] T043 [US4] Test carrera de reconcile/submit/rebuild y crash-before/after-broadcast.
 - [x] T044 [US2] Browser E2E desktop/móvil, evidencia declarada visible y ausencia de XSS/token storage.
 
@@ -57,7 +57,7 @@ Convención: `[x]` implica trabajo fuente comprobado dentro del alcance señalad
 - [x] T061 Fresh install con locks, npm ci y cargo --locked; pipeline local reproducible.
 - [ ] T062 Revisión externa/independiente de seguridad para dinero real (fuera de demo Testnet).
 - [ ] T063 Video del agente y transacción real; no simulaciones presentadas como reales.
-- [ ] T064 Actualizar README/estado y ZIP sin secretos/DB/node_modules/target.
+- [x] T064 Actualizar README/estado y ZIP sin secretos/DB/node_modules/target.
 
 ## No empezar antes del MVP
 

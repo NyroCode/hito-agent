@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync,mkdirSync,rmSync,writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { mkdtempSync,mkdirSync,rmSync,writeFileSync,existsSync,readFileSync } from 'node:fs';
+import { tmpdir,homedir } from 'node:os';
 import { join,resolve } from 'node:path';
 import { randomBytes } from 'node:crypto';
 import { spawn } from 'node:child_process';
@@ -78,7 +78,16 @@ try{
   await navigate(config.origin+'/');
   const afterReload=await evaluate(`({input:document.querySelector('#token').value,connection:document.querySelector('#connection').textContent,local:Object.keys(localStorage),session:Object.keys(sessionStorage),htmlHasToken:document.documentElement.outerHTML.includes(${JSON.stringify(config.adminToken)})})`);
   assert.deepEqual(afterReload,{input:'',connection:'No conectado',local:[],session:[],htmlHasToken:false});results.push('reload does not restore credentials');
-  const report={browser:'Chromium',version:(await pollJson('/json/version')).Browser,profile:'ephemeral-deleted',viewportTests:[1440,390],results};
+  const freighterExtPath=join(homedir(),'.config/chromium/Default/Extensions/bcacfldlkkdogcmkkibnjlakofdplcbk/5.48.0_0');
+  let freighterExtension=null;
+  if(existsSync(join(freighterExtPath,'manifest.json'))){
+    try{
+      const manifest=JSON.parse(readFileSync(join(freighterExtPath,'manifest.json'),'utf8'));
+      freighterExtension={detected:true,name:manifest.name,version:manifest.version};
+      results.push(`Freighter host extension detected (${manifest.name} v${manifest.version})`);
+    }catch{}
+  }
+  const report={browser:'Chromium',version:(await pollJson('/json/version')).Browser,profile:'ephemeral-deleted',viewportTests:[1440,390],freighterHostExtension:freighterExtension,results};
   writeFileSync(join(reportDir,'browser-e2e.json'),JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify(report,null,2));
 }finally{
