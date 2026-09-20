@@ -53,6 +53,7 @@ try{
   await waitFor(`document.querySelector('#connection').textContent.includes('admin')`,'Admin UI did not connect');
   const security=await evaluate(`({input:document.querySelector('#token').value,local:Object.keys(localStorage),session:Object.keys(sessionStorage),cookie:document.cookie,htmlHasToken:document.documentElement.outerHTML.includes(${JSON.stringify(config.adminToken)})})`);
   assert.deepEqual(security,{input:'',local:[],session:[],cookie:'',htmlHasToken:false});results.push('ephemeral token absent from input/storage/cookie/DOM');
+  await waitFor(`[...document.querySelectorAll('#works button')].some(x=>x.textContent.includes(${JSON.stringify(malicious)}))`,'Work button did not appear');
   await evaluate(`(()=>{[...document.querySelectorAll('#works button')].find(x=>x.textContent.includes(${JSON.stringify(malicious)})).click();return true})()`);
   await waitFor(`document.querySelector('#detail h2')?.textContent===${JSON.stringify(malicious)}`,'Malicious-title work did not open');
   const escaped=await evaluate(`({title:document.querySelector('#detail h2').textContent,titleHtml:document.querySelector('#detail h2').innerHTML,injected:!!document.querySelector('#detail h2 img'),evidence:document.querySelector('#detail').textContent.includes('Evidencias registradas (1)'),declared:document.querySelector('#detail').textContent.includes('self_reported')})`);

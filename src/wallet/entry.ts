@@ -9,3 +9,7 @@ export async function signIntent(intent:{source:string;unsignedXdr:string;expire
   if(result.error||!result.signedTxXdr||result.signerAddress!==intent.source)throw new Error('Signature rejected or wrong account');
   return result.signedTxXdr;
 }
+export async function getConnectedAddress():Promise<string>{
+  const access=await requestAccess();if(access.error)throw new Error('Freighter access denied: '+(access.error.message||access.error));
+  return access.address;
+}

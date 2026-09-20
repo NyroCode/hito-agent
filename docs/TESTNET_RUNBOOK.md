@@ -46,7 +46,7 @@ Preflight confirma la red, no ownership, balances ni code hash. Verificar eso se
 8. `release`: transferencia fija al proveedor después de aprobación. Desde la UI se usa cuenta del pagador para la transacción; el método contractual es permissionless y puede llamarlo otro pagador de fee sin cambiar el destinatario.
 9. Repetir release debe fallar sin segunda transferencia. Guardar error y balances. Una simulación fallida no tiene necesariamente un evento confirmado.
 
-No saltar a la siguiente firma mientras la anterior siga UNKNOWN. La ventana XDR es 180 s. Si caduca, seguir la política de recovery documentada, no borrar locks.
+No saltar a la siguiente firma mientras la anterior siga UNKNOWN. La ventana XDR es 900 s (15 min). Si caduca, seguir la política de recovery documentada, no borrar locks.
 
 ## 5. Otros escenarios, works separados
 

@@ -12,7 +12,22 @@ export class PaymentService {
   private save(i:Intent){const w=this.work.store.get<{projectId:string}>('work',i.workId)!;this.work.store.put('intent',i.id,w.projectId,i);}
   async build(a:Actor,iid:string){
     let i=this.work.intent(a,iid);const w=this.work.work(a,i.workId);authorize(a,w.projectId,true);
-    if(i.status==='READY'){check((i.expiresAt??0)>this.work.now(),'EXPIRED','Reconcile this intent before preparing a new transaction',409);return {...this.work.publicIntent(i),unsignedXdr:i.unsignedXdr};}
+    if(i.status==='READY'){
+      if((i.expiresAt??0)>this.work.now())return {...this.work.publicIntent(i),unsignedXdr:i.unsignedXdr};
+      check(i.signedXdr===null,'EXPIRED','Signed envelope exists; reconcile before preparing a new transaction',409);
+      let r:ChainResult;try{r=await this.chain.lookup(i.txHash!,i.expiresAt??undefined);}catch{r={status:'UNKNOWN',error:'RPC unavailable'};}
+      if(r.status==='SUCCESS'){this.apply(a,i,r);check(false,'EXPIRED','Transaction already confirmed on-chain; refresh state',409);}
+      check(r.status==='FAILED','EXPIRED','Reconcile this intent before preparing a new transaction',409);
+      const attempt=randomUUID();
+      this.work.store.transaction(()=>{i=this.work.intent(a,iid);check(i.status==='READY','STATE','Intent changed while regenerating',409);i={...i,status:'PREPARING',preparingAt:this.work.now(),buildAttempt:attempt};this.save(i);});
+      try{
+        const p=await this.chain.prepare(i,w,this.work.project(a,w.projectId));
+        this.work.store.transaction(()=>{const current=this.work.intent(a,iid);check(current.status==='PREPARING'&&current.buildAttempt===attempt,'STATE','Preparation lease no longer belongs to this build',409);i={...current,...p,status:'READY',error:null,preparingAt:null,buildAttempt:null};this.save(i);this.work.store.audit(a.id,'intent.built',w.projectId,i.id,{txHash:i.txHash,regenerated:true});});
+        return {...this.work.publicIntent(i),unsignedXdr:i.unsignedXdr};
+      }catch(e){
+        this.work.store.transaction(()=>{const current=this.work.intent(a,iid);if(current.status==='PREPARING'&&current.buildAttempt===attempt){i={...current,status:'BUILD_FAILED',error:'Build/simulation failed. No signed transaction was submitted.',preparingAt:null,buildAttempt:null};this.save(i);this.work.store.unlock(i.source,i.id);}});throw e;
+      }
+    }
     check(i.status==='REQUESTED','STATE','Intent is not ready to build; inspect/reconcile current state',409);
     const attempt=randomUUID();
     this.work.store.transaction(()=>{i=this.work.intent(a,iid);check(i.status==='REQUESTED','STATE','Already being prepared',409);this.work.store.acquire(i.source,i.id);i={...i,status:'PREPARING',preparingAt:this.work.now(),buildAttempt:attempt};this.save(i);});
@@ -39,7 +54,7 @@ export class PaymentService {
   async reconcile(a:Actor,iid:string){
     const i=this.work.intent(a,iid);if(i.status==='SUCCESS'||i.status==='FAILED')return this.work.publicIntent(i);
     check(i.txHash,'STATE','No transaction hash available for reconciliation',409);
-    let r:ChainResult;try{r=await this.chain.lookup(i.txHash);}catch{r={status:'UNKNOWN',error:'RPC unavailable. No final status inferred.'};}
+    let r:ChainResult;try{r=await this.chain.lookup(i.txHash,i.expiresAt??undefined);}catch{r={status:'UNKNOWN',error:'RPC unavailable. No final status inferred.'};}
     // Reading NOT_FOUND for an unsigned READY intent must not prevent signing it before expiry.
     if(r.status==='UNKNOWN'&&i.status==='READY')return this.work.publicIntent(i);
     return this.apply(a,i,r);
@@ -63,7 +78,7 @@ export class PaymentService {
     check(i.status==='READY','RECOVERY_BLOCKED','Only a stale preparation or expired unsigned transaction can use recovery',409);
     check((i.expiresAt??0)<=this.work.now(),'PREPARATION_ACTIVE','Unsigned transaction has not expired',409);
     check(i.txHash,'STATE','No transaction hash available for reconciliation',409);
-    let r:ChainResult;try{r=await this.chain.lookup(i.txHash);}catch{r={status:'UNKNOWN',error:'RPC unavailable. No final status inferred.'};}
+    let r:ChainResult;try{r=await this.chain.lookup(i.txHash,i.expiresAt??undefined);}catch{r={status:'UNKNOWN',error:'RPC unavailable. No final status inferred.'};}
     if(r.status==='SUCCESS'||r.status==='FAILED')return this.apply(a,i,r);
     this.work.store.transaction(()=>{const current=this.work.intent(a,iid);if(current.status==='READY')this.work.store.audit(a.id,'intent.recovery_blocked',w.projectId,i.id,{status:r.status,hash:i.txHash});});
     check(false,'RECOVERY_BLOCKED','Expired READY cannot be unlocked: UNKNOWN/NOT_FOUND does not prove the transaction was never included',409);

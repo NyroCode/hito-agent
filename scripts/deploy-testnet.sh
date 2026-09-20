@@ -12,8 +12,10 @@ fi
 cargo test --locked --manifest-path contracts/Cargo.toml
 cargo build --locked --manifest-path contracts/Cargo.toml --target wasm32v1-none --release
 mkdir -p reports/testnet
-# Review stellar contract deploy --help against your installed CLI before using this command.
-stellar contract deploy --wasm contracts/target/wasm32v1-none/release/hito_escrow.wasm --source-account "$HITO_DEPLOYER" --network testnet -- --token "$HITO_TOKEN_CONTRACT_ID" | tee reports/testnet/contract-id.txt
-printf '
-Record contract ID, WASM SHA-256, CLI version, asset provenance and new Testnet project in docs/TESTNET_RUNBOOK.md.
-'
+if command -v stellar >/dev/null 2>&1; then
+  stellar contract deploy --wasm contracts/target/wasm32v1-none/release/hito_escrow.wasm --source-account "$HITO_DEPLOYER" --network testnet -- --token "$HITO_TOKEN_CONTRACT_ID" | tee reports/testnet/contract-id.txt
+else
+  echo "[deploy] stellar CLI not found in PATH, using node scripts/deploy-testnet.mjs..."
+  node scripts/deploy-testnet.mjs | tee reports/testnet/contract-id.txt
+fi
+printf '\nRecord contract ID, WASM SHA-256, CLI version, asset provenance and new Testnet project in docs/TESTNET_RUNBOOK.md.\n'

@@ -3,6 +3,7 @@ import { NETWORK,digest } from '../domain/primitives.ts';
 import { commitment } from '../domain/model.ts';
 import type { Intent,Work,Project,OnchainWork } from '../domain/model.ts';
 import type { ChainPort,ChainResult } from './port.ts';
+export const TRANSACTION_TIMEOUT_SECONDS=900;
 
 export function submissionOutcome(status:string):ChainResult {
   if(status==='PENDING'||status==='DUPLICATE')return {status:'SUBMITTED'};
@@ -43,7 +44,7 @@ export async function stellarChain(contractId:string,rpcUrl:string):Promise<Chai
   }
   async function simulate(source:string,cid:string,method:string,args:ReturnType<typeof encode>[]) {
     const account=await server.getAccount(source);
-    const tx=new S.TransactionBuilder(account,{fee:S.BASE_FEE,networkPassphrase:NETWORK}).addOperation(new S.Contract(cid).call(method,...args)).setTimeout(180).build();
+    const tx=new S.TransactionBuilder(account,{fee:S.BASE_FEE,networkPassphrase:NETWORK}).addOperation(new S.Contract(cid).call(method,...args)).setTimeout(TRANSACTION_TIMEOUT_SECONDS).build();
     const sim=await server.simulateTransaction(tx);
     check(!S.rpc.Api.isSimulationError(sim),'SIMULATION','Contract simulation rejected the operation. Inspect the agreement, role, balance and deadline.',409);
     check(S.rpc.Api.isSimulationSuccess(sim),'RESTORATION_REQUIRED','Contract state may need restoration; do not treat it as a new agreement.',409);
@@ -82,10 +83,17 @@ export async function stellarChain(contractId:string,rpcUrl:string):Promise<Chai
       check(r.hash===i.txHash,'RPC_HASH','Unexpected RPC transaction hash',503);
       return submissionOutcome(r.status);
     },
-    async lookup(hash):Promise<ChainResult>{
+    async lookup(hash,expiresAt?:number):Promise<ChainResult>{
       await network();const r=await server.getTransaction(hash);
       if(r.status===S.rpc.Api.GetTransactionStatus.SUCCESS)return {status:'SUCCESS',ledger:r.ledger};
       if(r.status===S.rpc.Api.GetTransactionStatus.FAILED)return {status:'FAILED',ledger:r.ledger,error:'Confirmed failed transaction'};
+      if(r.status===S.rpc.Api.GetTransactionStatus.NOT_FOUND&&typeof expiresAt==='number'&&expiresAt>0){
+        const latestClose=Number(r.latestLedgerCloseTime??0);
+        const oldestClose=Number(r.oldestLedgerCloseTime??0);
+        if(latestClose>expiresAt&&(oldestClose<=expiresAt||oldestClose===0)){
+          return {status:'FAILED',ledger:r.latestLedger,error:'Transaction expired without ledger inclusion past maxTime'};
+        }
+      }
       return {status:'UNKNOWN',error:'NOT_FOUND is not proof of failure. Keep original hash and envelope.'};
     },read,
   };

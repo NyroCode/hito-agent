@@ -5,6 +5,6 @@ export interface ChainPort {
   prepare(i:Intent,w:Work,p:Project):Promise<Prepared>;
   validateSigned(i:Intent,xdr:string):Promise<string>;
   broadcast(i:Intent):Promise<ChainResult>;
-  lookup(hash:string):Promise<ChainResult>;
+  lookup(hash:string,expiresAt?:number):Promise<ChainResult>;
   read(w:Work,p:Project):Promise<OnchainWork>;
 }
