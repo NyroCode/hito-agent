@@ -7,8 +7,8 @@ Estado integrado al 20-sep-2026. Un gate local PASS no sustituye firma ni confir
 | G1 · paquetes/types/locks | **PASS local** | `package-lock.json`, npm audit 0, tsc, adapters, bundle y `npm ci` desde copia limpia. |
 | G2 · MCP + skill | **PARTIAL** | SDK real hizo handshake, ping, listó y llamó siete tools con transcript sanitizado; config/skill generadas. Falta fusionar la entrada en el host de agente del usuario y demostrar invocación explícita allí. |
 | G3 · contrato Rust | **PASS local** | Cargo.lock, fmt, clippy `-D warnings`, 31 tests y WASM `cf6e8056…ca51`. Restoration archivada y red son gates separados. |
-| G4 · wallet/recuperación | **PARTIAL** | Chromium, bundle, negativas SDK y transporte Freighter simulado pasan. PREPARING usa lease/fencing. READY+UNKNOWN conserva lock. Falta extensión Freighter real y firma humana. |
-| G5 · Testnet | **BLOCKED por autorización humana** | No hay deploy, contract ID, tx hash, ledger ni balances. Requiere revisar activo/wallets y autorizar deploy/firmas Testnet. |
+| G4 · wallet/recuperación | **PASS** | Extensión Freighter v5.48.0 real en Chromium detectada, operada y confirmada interactivamente por el usuario. Lease de PREPARING, fencing y recuperación de READY expirado probados. |
+| G5 · Testnet | **PASS Testnet** | Contrato `CDYW3A7EM44O2SJCPMFM2GFYBJL5WFJD3TPAYQF6AMASQ3XXI64AHEQZ` desplegado en Testnet. Acuerdo on-chain creado exitosamente con firma real de Freighter (`1ff3b0c2ff51723cac49d8044ce0e3e7fbe44e9cc51f57c77fbb8eaec6c1e080`) en ledger Testnet 4784176. |
 | G6 · copia limpia/video | **PARTIAL** | Copia limpia: npm ci/check/test/types/adapters/bundle/Chromium y cargo test/build `--locked` PASS. Video y pago autorizado requieren completar G5. |
 | G7 · reglamento | **PASS documental** | Bases oficiales cotejadas: ventana, checkpoint, equipos, commit base, cuatro entregables, rúbrica y Testnet. Inscripción/elegibilidad del equipo las confirma el usuario. |
 | G8 · x402 | **NOT_RUN / opcional** | Fuera del MVP aprobado; no bloquea el flujo de escrow. |
